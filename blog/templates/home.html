@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Posts</h1>
+
+{% for post in object_list %}
+
+  <a href="{% url 'post-detail' post.pk %}" class="text-decoration-none"> 
+    <div class="col-10 p-2 mv-2">
+    <h4 class="h4 text-primary">{{ post.title }}
+      {% if user.is_authenticated and user.id == post.author.id %}
+      
+      <small style='font-size:14px'><a href="{% url 'update-post' post.pk %}" style='font-size:14px'>Edit</a>
+      <a href="{% url 'delete-post' post.pk %}" class="text-danger" style='font-size:14px'>Delete</a></small>
+
+     {% endif %}</h4>
+    <h5 class="h5 text-secondary"><small>{{post.author.first_name }} {{ post.author.last_name }} - {{ post.created_date.date }}</small></h5> 
+    
+   <br />
+   {{ post.snippet }}...
+  </div>
+  <hr/>
+  </a>
+
+
+{% endfor %} 
+<nav aria-label="...">
+  <ul class="pagination">
+    <li class="page-item {% if not page_obj.has_previous %} disabled {% endif %}">
+      <a class="page-link" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}">Previous</a>
+    </li>
+    {% for pagenumber in page_obj.paginator.page_range %}
+    <li class="page-item {% if page_obj.number == pagenumber %} active {% endif %}">
+      <a class="page-link" href="?page={{pagenumber}}">{{pagenumber}}</a>
+    </li>
+    {% endfor %}
+
+    <li class="page-item {% if not page_obj.has_next %} disabled {% endif %}">
+      <a class="page-link" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}">Next</a>
+    </li>
+  </ul>
+</nav>
+{% endblock %}

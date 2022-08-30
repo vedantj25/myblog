@@ -1,0 +1,42 @@
+{% extends 'base.html' %} {% block title %} {{ post.title_tag }} {% endblock %}
+{%block content %}
+<h1>{{ post.title }}</h1>
+<small>By: {{ post.author.first_name }} {{ post.author.last_name }} - {{ post.created_date.date }}
+ {% if user.is_authenticated and user.id == post.author.id %}
+  -
+  <a href="{% url 'update-post' post.pk %}">Edit</a>
+   <a href="{% url 'delete-post' post.pk %}" class="text-danger">Delete</a>
+   {% endif %}</small><br />
+<hr />
+<br />
+{{ post.body | safe }}
+
+<br />
+<hr />
+<h3>{{ post.comments.count }} Comment(s)</h3>
+{% if not post.comments.all %}
+No comments yet
+{% else %}
+
+<table class="table table-striped">
+{% for comment in post.comments.all %}
+<tr><td><strong>{{ comment.name }} - {{ comment.date_added }}</strong><br>
+{{ comment.body }}
+</td></tr>
+{% endfor %}
+
+</table>
+
+{% endif %}
+<hr/>
+<h2>Add Comment</h2>
+<div class="col-4">
+ <div class="form-group">
+ <form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-secondary">Add</button>
+ </form>
+</div>
+</div>
+{% endblock %}
